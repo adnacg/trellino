@@ -1,0 +1,44 @@
+{
+  "columns": [
+    {
+      "id": 1,
+      "title": "Pending Stuff"
+    },
+    {
+      "id": 2,
+      "title": "Completed Stuff"
+    }
+  ],
+  "cards": [
+    {
+      "id": 1,
+      "title": "Project briefing",
+      "description": "Brief students on the requirements of project one on Thursday.",
+      "columnId": 1
+    },
+    {
+      "id": 2,
+      "title": "Consulting session with students",
+      "description": "Need to speak with Adna and Elvera regarding homework progression.",
+      "columnId": 1
+    },
+    {
+      "id": 3,
+      "title": "One-on-one with Akira",
+      "description": "Need help with some stuff.",
+      "columnId": 1
+    },
+    {
+      "id": 4,
+      "title": "Organise class lunch",
+      "description": "Need to check diet restrictions of all students.",
+      "columnId": 2
+    },
+    {
+      "id": 5,
+      "title": "Discussion with Gabriel",
+      "description": "Pending to speak with Gabriel about the mornign exercises.",
+      "columnId": 2
+    }
+  ]
+}

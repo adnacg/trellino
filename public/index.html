@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Trellino</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            height: 100%;
+            width: 100%;
+            background-color: #f2d388;
+        }
+    </style>
+    <script src="components/card/card.js" defer></script>
+    <script src="components/column/column.js" defer></script>
+    <script src="components/app/app.js" defer></script>
+    <!-- <link rel="import" href="components/app/app.html"> -->
+    <!-- <script src="main.js" defer></script> -->
+</head>
+
+<body>
+    <template id="my-card">
+        <style>
+            #card {
+                border-radius: 2px;
+                background-color: #f2d388;
+                border: 1px solid #874c62;
+                color: #874c62;
+                height: 100px;
+                width: 95%;
+                margin: 0.5rem auto;
+            }
+
+            #card-title {
+                font-weight: bold;
+            }
+        </style>
+        <div id="card">
+            <div id="card-title">Card Title</div>
+            <div id="card-content">Card Description</div>
+        </div>
+    </template>
+
+    <template id="my-column">
+        <style>
+            #column {
+                background-color: #c98474;
+                height: 500px;
+                width: 300px;
+                margin: 2rem 1rem;
+                border: 1px solid #874c62;
+                border-radius: 2px;
+                box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+                color: #874c62;
+                text-align: center;
+                line-height: 2rem;
+            }
+
+            #column-title {
+                background-color: #874c62;
+                font-weight: bold;
+                color: #f2d388;
+            }
+        </style>
+        <div id="column">
+            <div id="column-title">Column Title</div>
+            <div id="column-content"></div>
+        </div>
+    </template>
+
+    <template id="my-app">
+        <style>
+            #main-container {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                width: 100%;
+                flex-direction: row;
+            }
+
+            h1 {
+                background-color: #874c62;
+                color: #f2d388;
+                margin: 0;
+                padding: 10px;
+                text-align: center;
+                letter-spacing: 0.4rem;
+            }
+        </style>
+        <header>
+            <h1>TRELLINO</h1>
+        </header>
+        <main id="main-container"></main>
+    </template>
+
+    <my-app>
+        <my-column>
+        </my-column>
+    </my-app>
+</body>
+
+</html>
