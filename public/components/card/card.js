@@ -15,9 +15,7 @@ customElements.define(
       this.hideContent = true;
       const cardDiv = this.shadowRoot.getElementById("card");
 
-      cardDiv.addEventListener("click", event => {
-        console.log(this.hideContent);
-
+      cardDiv.addEventListener("click", () => {
         const cardContent = this.shadowRoot.getElementById("card-content");
         if (!this.hideContent) {
           cardContent.style.display = "none";

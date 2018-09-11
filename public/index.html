@@ -27,7 +27,7 @@
     <template id="my-card">
         <style>
             #card {
-                border-radius: 2px;
+                border-radius: 3px;
                 background-color: #f2d388;
                 border: 1px solid #874c62;
                 color: #874c62;
@@ -63,21 +63,31 @@
                 width: 300px;
                 margin: 2rem 1rem;
                 border: 1px solid #874c62;
-                border-radius: 2px;
+                border-radius: 3px;
                 box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
                 color: #874c62;
                 text-align: center;
                 line-height: 2rem;
             }
 
-            #column-title {
+            #column-title-display {
                 background-color: #874c62;
                 font-weight: bold;
                 color: #f2d388;
+                justify-content: center;
+            }
+
+            #column-title-edit {
+                display: none;
             }
         </style>
         <div id="column">
-            <div id="column-title">Column Title</div>
+            <div id="column-title">
+                <div id="column-title-display">Column Title Display</div>
+                <form action="" id="column-title-edit">
+                    <input id="column-title-input" value="Column Title Edit" />
+                </form>
+            </div>
             <div id="column-content"></div>
         </div>
     </template>
@@ -100,8 +110,21 @@
                 text-align: center;
                 letter-spacing: 0.4rem;
             }
+
+            #add-column {
+                float: left;
+                cursor: pointer;
+                color: #f2d388;
+                border: 1px solid #f2d388;
+                border-radius: 3px;
+                width: 2rem;
+                height: 2rem;
+                text-align: center;
+                line-height: 2rem;
+            }
         </style>
         <header>
+            <span id="add-column">+</span>
             <h1>TRELLINO</h1>
         </header>
         <main id="main-container"></main>

@@ -7,6 +7,53 @@ customElements.define(
       let templateContent = template.content;
       const shadowRoot = this.attachShadow({ mode: "open" });
       shadowRoot.appendChild(templateContent.cloneNode(true));
+
+      const addColumnBtn = this.shadowRoot.getElementById("add-column");
+      addColumnBtn.onclick = () => {
+        let columns;
+        let cards;
+        let newTitle;
+        fetch("http://localhost:3000/columns")
+          .then(response => response.json())
+          .then(cols => {
+            columns = cols;
+            const columnTitles = cols.map(column => column.title);
+            newTitle = "New Column";
+            let counter = 0;
+            while (columnTitles.indexOf(newTitle) > -1) {
+              counter++;
+              newTitle = `New Column (${counter})`;
+            }
+            return fetch("http://localhost:3000/columns", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json; charset=utf-8"
+              },
+              body: JSON.stringify({ title: newTitle })
+            });
+          })
+          .then(response => {
+            if (response.status === 201) {
+              columns.push({
+                title: newTitle
+              });
+              return fetch("http://localhost:3000/cards");
+            }
+          })
+          .then(response => response.json())
+          .then(response => {
+            cards = response;
+            // Update the main div
+            this.clearDashboard();
+            this.buildDashboard(columns, cards);
+          })
+          .catch(error => {
+            console.error(
+              "Something went wrong while fetching data from DB:",
+              error
+            );
+          });
+      };
     }
 
     connectedCallback() {
@@ -33,11 +80,17 @@ customElements.define(
         });
     }
 
+    clearDashboard() {
+      const mainContainer = this.shadowRoot.getElementById("main-container");
+      mainContainer.innerHTML = "";
+    }
+
     buildDashboard(columns, cards) {
       console.log("Building dashboard for columns");
       columns.forEach(column => {
         const columnElem = document.createElement("my-column");
         columnElem.setAttribute("title", column.title);
+        columnElem.setAttribute("columnId", column.id);
         const containerElem = this.shadowRoot.getElementById("main-container");
         containerElem.appendChild(columnElem);
         cards.filter(card => card.columnId === column.id).forEach(card => {
