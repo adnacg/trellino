@@ -11,6 +11,21 @@ customElements.define(
       let templateContent = template.content;
       const shadowRoot = this.attachShadow({ mode: "open" });
       shadowRoot.appendChild(templateContent.cloneNode(true));
+
+      this.hideContent = true;
+      const cardDiv = this.shadowRoot.getElementById("card");
+
+      cardDiv.addEventListener("click", event => {
+        console.log(this.hideContent);
+
+        const cardContent = this.shadowRoot.getElementById("card-content");
+        if (!this.hideContent) {
+          cardContent.style.display = "none";
+        } else {
+          cardContent.style.display = "unset";
+        }
+        this.hideContent = !this.hideContent;
+      });
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
