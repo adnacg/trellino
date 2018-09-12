@@ -1,0 +1,46 @@
+#card {
+  border-radius: 3px;
+  background-color: #f2d388;
+  border: 1px solid #874c62;
+  color: #874c62;
+  height: inherit;
+  width: 95%;
+  margin: 0.5rem auto;
+}
+
+#card:hover {
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+#card-title-display {
+  font-size: 1.1rem;
+  padding: 0.2rem;
+  text-align: left;
+}
+
+#card-title-edit {
+  /* display: none; */
+}
+
+input#card-title-input {
+  font-family: "Josefin Sans", sans-serif;
+  line-height: 2rem;
+  font-size: 1rem;
+  text-align: left;
+  color: #874c62;
+  border: 1px solid #f2d388;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.22);
+  background: transparent;
+  height: 2rem;
+  margin-left: 0.5rem;
+}
+
+#card-content-div {
+  padding: 0 0.2rem;
+}
+
+#card-content-input {
+  display: none;
+}

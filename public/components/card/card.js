@@ -2,63 +2,124 @@ customElements.define(
   "my-card",
   class extends HTMLElement {
     static get observedAttributes() {
-      return ["cardId", "title", "description"];
+      return ["title", "description"];
     }
 
     constructor() {
       super();
+
+      this.hideContent = true;
+      this.currentTitle;
+      this.description;
+
       let template = document.getElementById("my-card");
       let templateContent = template.content;
       const shadowRoot = this.attachShadow({ mode: "open" });
+      shadowRoot.innerHTML =
+        '<link rel="stylesheet" href="components/card/card.css">';
       shadowRoot.appendChild(templateContent.cloneNode(true));
 
-      this.hideContent = true;
-      const cardDiv = this.shadowRoot.getElementById("card");
-
-      cardDiv.addEventListener("click", event => {
-        if (event.target.id === "delete-card") {
-          return;
-        }
-
-        const cardContent = this.shadowRoot.getElementById("card-content");
-        if (!this.hideContent) {
-          cardContent.style.display = "none";
-        } else {
-          cardContent.style.display = "unset";
-        }
-        this.hideContent = !this.hideContent;
-      });
-
-      const deleteCardBtn = this.shadowRoot.getElementById("delete-card");
-      deleteCardBtn.addEventListener("click", event => {
-        const confirmDelete = confirm("Are you sure?");
-        if (confirmDelete) {
-          this.deleteCard(this.getAttribute("cardId"));
-        }
-      });
+      shadowRoot
+        .getElementById("card")
+        .addEventListener("click", event => this.toggleDescription(event));
+      shadowRoot
+        .getElementById("delete-card")
+        .addEventListener("click", () => this.deleteCard());
+      shadowRoot.getElementById("card-title-edit").onsubmit = event =>
+        this.editTitle(event, this.getAttribute("cardId"));
+      shadowRoot.getElementById("card-content-input").onblur = event =>
+        this.editDescription(event, this.getAttribute("cardId"));
+      shadowRoot.getElementById("card-title-input").onchange = event =>
+        this.updateTitle(event);
+      shadowRoot.getElementById("card-content-input").onchange = event =>
+        this.updateDescription(event);
     }
 
-    deleteCard(cardId) {
-      fetch(`http://localhost:3000/cards/${cardId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json; charset=utf-8"
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          this.parentNode.removeChild(this);
-        }
-      });
-    }
+    //-----------------------------
+    // Lifecycle hooks
+    //-----------------------------
 
     attributeChangedCallback(name, oldValue, newValue) {
       if (name === "title") {
-        let cardTitleElem = this.shadowRoot.getElementById("card-title");
-        cardTitleElem.textContent = newValue;
+        this.shadowRoot.getElementById("card-title-input").value = newValue;
+        this.currentTitle = newValue;
       } else if (name === "description") {
-        let cardContentElem = this.shadowRoot.getElementById("card-content");
-        cardContentElem.textContent = newValue;
+        this.shadowRoot.getElementById("card-content-input").value = newValue;
+        this.description = newValue;
       }
+    }
+
+    //-----------------------------
+    // Event listener callbacks
+    //-----------------------------
+
+    toggleDescription(event) {
+      if (
+        ["delete-card", "card-title-input", "card-content-input"].includes(
+          event.target.id
+        )
+      ) {
+        return;
+      }
+      const cardContent = this.shadowRoot.getElementById("card-content-input");
+      cardContent.style.display = this.hideContent ? "unset" : "none";
+      this.hideContent = !this.hideContent;
+    }
+
+    updateTitle(event) {
+      this.currentTitle = event.target.value;
+    }
+
+    updateDescription(event) {
+      this.description = event.target.value;
+    }
+
+    deleteCard() {
+      if (confirm("Are you sure?")) {
+        db.Card.delete(this.getAttribute("cardId"))
+          .then(() => this.parentNode.removeChild(this))
+          .catch(error => console.error("Something went wrong:", error));
+      }
+    }
+
+    editTitle(event, cardId) {
+      event.preventDefault();
+
+      const newTitle = this.currentTitle;
+      const inputElem = event.currentTarget.querySelector("input");
+      if (newTitle === this.getAttribute("title")) {
+        inputElem.blur();
+        return;
+      }
+
+      db.Card.fetchAll()
+        .then(cards => {
+          const titles = cards.map(card => card.title);
+          if (titles.includes(newTitle)) {
+            return Promise.reject("Name already taken");
+          }
+          return db.Card.editTitle(cardId, newTitle);
+        })
+        .then(() => {
+          this.setAttribute("title", newTitle);
+          inputElem.blur();
+        })
+        .catch(error => console.error("Something went wrong:", error));
+    }
+
+    editDescription(event, cardId) {
+      const newDescription = this.description;
+      const descriptionElem = event.currentTarget;
+      if (newDescription === this.getAttribute("description")) {
+        return;
+      }
+
+      db.Card.editDescription(cardId, newDescription)
+        .then(() => {
+          this.setAttribute("description", newDescription);
+          descriptionElem.blur();
+        })
+        .catch(error => console.error("Something went wrong:", error));
     }
   }
 );

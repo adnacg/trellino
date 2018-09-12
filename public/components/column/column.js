@@ -7,164 +7,131 @@ customElements.define(
 
     constructor() {
       super();
+
+      this.editing = false;
+      this.currentTitleValue = "";
+      this.cards = [];
+
       let template = document.getElementById("my-column");
       let templateContent = template.content;
       const shadowRoot = this.attachShadow({ mode: "open" });
+      shadowRoot.innerHTML =
+        '<link rel="stylesheet" href="components/column/column.css">';
       shadowRoot.appendChild(templateContent.cloneNode(true));
 
-      const columnTitle = this.shadowRoot.getElementById(
+      shadowRoot
+        .getElementById("column-title-display")
+        .addEventListener("click", () => this.toggleTitleEdit());
+      shadowRoot
+        .getElementById("delete-column")
+        .addEventListener("click", () => this.deleteColumn());
+      shadowRoot.getElementById("column-title-edit").onsubmit = event =>
+        this.editColumnTitle(event, this.getAttribute("columnId"));
+      shadowRoot.getElementById("column-title-input").onchange = event =>
+        this.updateTitleValue(event);
+      shadowRoot.getElementById("add-card").onclick = () => this.addCard();
+    }
+
+    //-----------------------------
+    // Lifecycle hooks
+    //-----------------------------
+
+    attributeChangedCallback(name, _, newValue) {
+      if (name === "title") {
+        this.shadowRoot.getElementById(
+          "column-title-display"
+        ).textContent = newValue;
+        this.currentTitleValue = newValue;
+      }
+    }
+
+    //-----------------------------
+    // Event listener callbacks
+    //-----------------------------
+
+    addCard() {
+      db.Card.fetchAll()
+        .then(cards => {
+          this.cards = cards;
+          return db.Card.create({
+            title: this.generateDefaultName(),
+            description: "Your description here...",
+            columnId: parseInt(this.getAttribute("columnId"))
+          });
+        })
+        .then(newCard => {
+          this.shadowRoot
+            .getElementById("column-content")
+            .appendChild(dom.createCardElem(newCard));
+        })
+        .catch(error => console.error("Something went wrong:", error));
+    }
+
+    toggleTitleEdit() {
+      const titleDisplay = this.shadowRoot.getElementById(
         "column-title-display"
       );
-      this.editing = false;
-      this.currentTitleValue = "";
-      columnTitle.addEventListener("click", () => {
-        const titleDisplay = this.shadowRoot.getElementById(
-          "column-title-display"
-        );
-        const titleEdit = this.shadowRoot.getElementById("column-title-edit");
-        const titleInput = this.shadowRoot.getElementById("column-title-input");
-        if (!this.editing) {
-          titleDisplay.style.display = "none";
-          titleEdit.style.display = "unset";
+      const titleEdit = this.shadowRoot.getElementById("column-title-edit");
+      const titleInput = this.shadowRoot.getElementById("column-title-input");
 
-          titleInput.value = this.currentTitleValue;
-          titleInput.onchange = event => this.updateTitleValue(event);
-
-          titleEdit.onsubmit = event =>
-            this.editColumnTitle(event, this.getAttribute("columnId"));
-          this.editing = true;
-        }
-      });
-
-      const deleteColumnBtn = this.shadowRoot.getElementById("delete-column");
-      deleteColumnBtn.addEventListener("click", event => {
-        const confirmDelete = confirm("Are you sure?");
-        if (confirmDelete) {
-          this.deleteColumn(event, this.getAttribute("columnId"));
-        }
-      });
-
-      const addCardBtn = this.shadowRoot.getElementById("add-card");
-      addCardBtn.onclick = () => {
-        let cards;
-        let cardTitle;
-        let cardDescription;
-        fetch("http://localhost:3000/cards")
-          .then(response => response.json())
-          .then(allCards => {
-            cards = allCards;
-            const cardTitles = allCards.map(card => card.title);
-            cardTitle = "New Card";
-            cardDescription = "Your description here...";
-            let counter = 0;
-            while (cardTitles.indexOf(cardTitle) > -1) {
-              counter++;
-              cardTitle = `New Column (${counter})`;
-            }
-            return fetch("http://localhost:3000/cards", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json; charset=utf-8"
-              },
-              body: JSON.stringify({
-                title: cardTitle,
-                description: cardDescription
-              })
-            });
-          })
-          .then(response => {
-            if (response.status === 201) {
-              return response.json();
-            }
-          })
-          .then(newCard => {
-            const cardElem = document.createElement("my-card");
-            cardElem.setAttribute("cardId", newCard.id);
-            cardElem.setAttribute("title", newCard.title);
-            cardElem.setAttribute("description", newCard.description);
-            const columnContentElem = this.shadowRoot.getElementById(
-              "column-content"
-            );
-            columnContentElem.appendChild(cardElem);
-          })
-          .catch(error => {
-            console.error(
-              "Something went wrong when creating card in DB:",
-              error
-            );
-          });
-      };
+      titleDisplay.style.display = this.editing ? "flex" : "none";
+      titleEdit.style.display = this.editing ? "none" : "flex";
+      titleInput.value = this.currentTitleValue;
+      this.editing = !this.editing;
     }
 
     updateTitleValue(event) {
       this.currentTitleValue = event.target.value;
     }
 
+    deleteColumn() {
+      if (confirm("Are you sure?")) {
+        db.Column.delete(this.getAttribute("columnId"))
+          .then(() => {
+            this.parentNode.removeChild(this);
+          })
+          .catch(error => console.error("Something went wrong:", error));
+      }
+    }
+
     editColumnTitle(event, columnId) {
       event.preventDefault();
+
       const newTitle = this.currentTitleValue;
       if (newTitle === this.getAttribute("title")) {
-        this.editing = false;
-        const titleDisplay = this.shadowRoot.getElementById(
-          "column-title-display"
-        );
-        const titleEdit = this.shadowRoot.getElementById("column-title-edit");
-        titleDisplay.style.display = "flex";
-        titleEdit.style.display = "none";
+        this.toggleTitleEdit();
         return;
       }
-      fetch(`http://localhost:3000/columns`)
-        .then(response => response.json())
+
+      db.Column.fetchAll()
         .then(columns => {
           const titles = columns.map(column => column.title);
-          if (titles.indexOf(newTitle) > -1) {
+          if (titles.includes(newTitle)) {
             return Promise.reject("Name already taken");
           }
-          return fetch(`http://localhost:3000/columns/${columnId}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json; charset=utf-8"
-            },
-            body: JSON.stringify({ title: newTitle })
-          });
+          return db.Column.editTitle(columnId, newTitle);
         })
-        .then(response => {
-          if (response.status !== 200) {
-            return Promise.reject("Failed to edit column title in DB");
-          }
-          const titleDisplay = this.shadowRoot.getElementById(
-            "column-title-display"
-          );
-          const titleEdit = this.shadowRoot.getElementById("column-title-edit");
-          titleDisplay.style.display = "flex";
-          titleEdit.style.display = "none";
+        .then(() => {
+          this.toggleTitleEdit();
           this.setAttribute("title", newTitle);
-          this.editing = false;
         })
-        .catch(error => console.log(error));
+        .catch(error => console.error("Something went wrong:", error));
     }
 
-    deleteColumn(event, columnId) {
-      fetch(`http://localhost:3000/columns/${columnId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json; charset=utf-8"
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          this.parentNode.removeChild(this);
-        }
-      });
-    }
+    //-----------------------------
+    // Utils
+    //-----------------------------
 
-    attributeChangedCallback(name, oldValue, newValue) {
-      if (name === "title") {
-        let columnTitleElem = this.shadowRoot.getElementById(
-          "column-title-display"
-        );
-        columnTitleElem.textContent = newValue;
-        this.currentTitleValue = newValue;
+    generateDefaultName() {
+      const cardsTitles = this.cards.map(card => card.title);
+      let newTitle = "New Card";
+
+      let counter = 0;
+      while (cardsTitles.includes(newTitle)) {
+        counter++;
+        newTitle = `New Card (${counter})`;
       }
+      return newTitle;
     }
   }
 );
