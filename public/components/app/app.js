@@ -34,11 +34,16 @@ customElements.define(
           })
           .then(response => {
             if (response.status === 201) {
-              columns.push({
-                title: newTitle
-              });
-              return fetch("http://localhost:3000/cards");
+              return response.json();
             }
+          })
+          .then(newColumn => {
+            console.log(newColumn);
+            columns.push({
+              title: newColumn.title,
+              id: newColumn.id
+            });
+            return fetch("http://localhost:3000/cards");
           })
           .then(response => response.json())
           .then(response => {
@@ -95,6 +100,7 @@ customElements.define(
         containerElem.appendChild(columnElem);
         cards.filter(card => card.columnId === column.id).forEach(card => {
           const cardElem = document.createElement("my-card");
+          cardElem.setAttribute("cardId", card.id);
           cardElem.setAttribute("title", card.title);
           cardElem.setAttribute("description", card.description);
           const columnContentElem = columnElem.shadowRoot.getElementById(
@@ -103,7 +109,6 @@ customElements.define(
           columnContentElem.appendChild(cardElem);
         });
       });
-      console.log(this.shadowRoot);
     }
   }
 );

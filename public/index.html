@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:100,100i,300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
     <title>Trellino</title>
     <style>
         body {
@@ -42,7 +43,13 @@
             }
 
             #card-title {
-                font-weight: bold;
+                font-size: 1.1rem;
+                padding: 0.2rem;
+                text-align: left;
+            }
+
+            #card-content-div {
+                padding: 0 0.2rem;
             }
 
             #card-content {
@@ -50,43 +57,103 @@
             }
         </style>
         <div id="card">
-            <div id="card-title">Card Title</div>
-            <div id="card-content">Card Description</div>
+            <div id="card-title-wrapper">
+                <div id="card-title">Card Title</div>
+                <div><span id="delete-card">X</span></div>
+            </div>
+            <div id="card-content-div">
+                <div id="card-content">Card Description</div>
+            </div>
         </div>
     </template>
 
     <template id="my-column">
         <style>
             #column {
+                font-family: "Josefin Sans", sans-serif;
                 background-color: #c98474;
-                height: 500px;
+                min-height: 400px;
+                max-height: auto;
                 width: 300px;
                 margin: 2rem 1rem;
                 border: 1px solid #874c62;
                 border-radius: 3px;
                 box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
                 color: #874c62;
-                text-align: center;
                 line-height: 2rem;
             }
 
-            #column-title-display {
+            #column-title {
+                display: flex;
+                align-items: center;
                 background-color: #874c62;
+                height: 3rem;
+                line-height: 3rem;
+            }
+
+            #column-title-display {
                 font-weight: bold;
                 color: #f2d388;
-                justify-content: center;
+                font-size: 1.5rem;
+                margin-left: 0.5rem;
             }
 
             #column-title-edit {
                 display: none;
             }
+
+            input#column-title-input {
+                line-height: 3rem;
+                font-size: 1.5rem;
+                font-family: "Josefin Sans", sans-serif;
+                text-align: left;
+                color: #f2d388;
+                border: 1px solid #f2d388;
+                border-radius: 3px;
+                box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.22);
+                background: transparent;
+                height: 2rem;
+                margin-left: 0.5rem;
+            }
+
+            #delete-column-div,
+            #add-card-div {
+                display: flex;
+                align-items: center;
+                margin-left: auto;
+                margin-right: 0.5rem;
+            }
+
+            #delete-column,
+            #add-card {
+                cursor: pointer;
+                text-align: center;
+                font-size: 1.5rem;
+                color: #f2d388;
+                background-color: #874c62;
+                border-radius: 3px;
+                width: 2rem;
+                height: 2rem;
+                line-height: 1.5rem;
+            }
+
+            #delete-column:hover,
+            #add-card:hover {
+                opacity: 0.9;
+                background-color: #c98474;
+                box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.22);
+            }
         </style>
         <div id="column">
             <div id="column-title">
                 <div id="column-title-display">Column Title Display</div>
-                <form action="" id="column-title-edit">
-                    <input id="column-title-input" value="Column Title Edit" />
-                </form>
+                <div>
+                    <form action="" id="column-title-edit">
+                        <input id="column-title-input" value="Column Title Edit" />
+                    </form>
+                </div>
+                <div id="add-card-div"><span id="add-card">+</span></div>
+                <div id="delete-column-div"><span id="delete-column">...</span></div>
             </div>
             <div id="column-content"></div>
         </div>
@@ -111,21 +178,51 @@
                 letter-spacing: 0.4rem;
             }
 
+            #navbar {
+                padding: 1rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
             #add-column {
-                float: left;
                 cursor: pointer;
                 color: #f2d388;
-                border: 1px solid #f2d388;
+                background-color: #874c62;
+                box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.22);
                 border-radius: 3px;
                 width: 2rem;
                 height: 2rem;
                 text-align: center;
                 line-height: 2rem;
             }
+
+            #add-column:hover {
+                opacity: 0.9;
+            }
+
+            #search-input {
+                height: 2rem;
+                background: transparent;
+                border: 1.2px solid #874c62;
+                box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.22);
+                border-radius: 3px;
+                margin-left: 1rem;
+                color: #874c62;
+                padding-left: 1rem;
+            }
+            input::placeholder {
+                color:#874c62;
+            }
         </style>
         <header>
-            <span id="add-column">+</span>
             <h1>TRELLINO</h1>
+            <nav id="navbar">
+                <div id="add-column">+</div>
+                <form action="">
+                    <input id="search-input" type="text" placeholder="Search.." name="search">
+                </form>
+            </nav>
         </header>
         <main id="main-container"></main>
     </template>

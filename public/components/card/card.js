@@ -2,7 +2,7 @@ customElements.define(
   "my-card",
   class extends HTMLElement {
     static get observedAttributes() {
-      return ["title", "description"];
+      return ["cardId", "title", "description"];
     }
 
     constructor() {
@@ -15,7 +15,11 @@ customElements.define(
       this.hideContent = true;
       const cardDiv = this.shadowRoot.getElementById("card");
 
-      cardDiv.addEventListener("click", () => {
+      cardDiv.addEventListener("click", event => {
+        if (event.target.id === "delete-card") {
+          return;
+        }
+
         const cardContent = this.shadowRoot.getElementById("card-content");
         if (!this.hideContent) {
           cardContent.style.display = "none";
@@ -23,6 +27,27 @@ customElements.define(
           cardContent.style.display = "unset";
         }
         this.hideContent = !this.hideContent;
+      });
+
+      const deleteCardBtn = this.shadowRoot.getElementById("delete-card");
+      deleteCardBtn.addEventListener("click", event => {
+        const confirmDelete = confirm("Are you sure?");
+        if (confirmDelete) {
+          this.deleteCard(this.getAttribute("cardId"));
+        }
+      });
+    }
+
+    deleteCard(cardId) {
+      fetch(`http://localhost:3000/cards/${cardId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          this.parentNode.removeChild(this);
+        }
       });
     }
 
