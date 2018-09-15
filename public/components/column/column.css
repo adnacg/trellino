@@ -24,7 +24,7 @@
   width: 10rem;
   font-weight: bold;
   color: #f2d388;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   margin-left: 0.5rem;
   margin-right: 4rem;
   height: inherit;
@@ -39,7 +39,7 @@
 input#column-title-input {
   width: 10rem;
   line-height: 3rem;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-family: "Josefin Sans", sans-serif;
   text-align: left;
   color: #f2d388;

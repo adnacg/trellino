@@ -47,7 +47,11 @@ customElements.define(
     //-----------------------------
 
     addColumn() {
-      db.Column.fetchAll()
+      db.Card.fetchAll()
+        .then(cards => {
+          this.cards = cards;
+          return db.Column.fetchAll();
+        })
         .then(columns => {
           this.columns = columns;
           return db.Column.create({ title: this.generateDefaultName() });

@@ -26,8 +26,6 @@ customElements.define(
       columnDivElem.ondragend = event => this.resetColumnColor(event);
       shadowRoot.getElementById("column-title-display").onclick = () =>
         this.toggleTitleEdit();
-      shadowRoot.getElementById("column-title-display").onblur = () =>
-        this.toggleTitleEdit();
       shadowRoot
         .getElementById("delete-column")
         .addEventListener("click", () => this.deleteColumn());
