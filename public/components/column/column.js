@@ -19,9 +19,15 @@ customElements.define(
         '<link rel="stylesheet" href="components/column/column.css">';
       shadowRoot.appendChild(templateContent.cloneNode(true));
 
-      shadowRoot
-        .getElementById("column-title-display")
-        .addEventListener("click", () => this.toggleTitleEdit());
+      const columnDivElem = shadowRoot.getElementById("column");
+      columnDivElem.ondragenter = event => this.dragenter(event);
+      columnDivElem.ondragover = event => this.dragover(event);
+      columnDivElem.ondragleave = event => this.resetColumnColor(event);
+      columnDivElem.ondragend = event => this.resetColumnColor(event);
+      shadowRoot.getElementById("column-title-display").onclick = () =>
+        this.toggleTitleEdit();
+      shadowRoot.getElementById("column-title-display").onblur = () =>
+        this.toggleTitleEdit();
       shadowRoot
         .getElementById("delete-column")
         .addEventListener("click", () => this.deleteColumn());
@@ -85,7 +91,7 @@ customElements.define(
     }
 
     deleteColumn() {
-      if (confirm("Are you sure?")) {
+      if (confirm("Delete the column?")) {
         db.Column.delete(this.getAttribute("columnId"))
           .then(() => {
             this.parentNode.removeChild(this);
@@ -116,6 +122,20 @@ customElements.define(
           this.setAttribute("title", newTitle);
         })
         .catch(error => console.error("Something went wrong:", error));
+    }
+
+    dragenter(event) {
+      event.preventDefault();
+    }
+
+    dragover(event) {
+      event.preventDefault();
+      event.currentTarget.style.background = "#c19489";
+    }
+
+    resetColumnColor(event) {
+      event.preventDefault();
+      event.currentTarget.style.background = "#c98474";
     }
 
     //-----------------------------

@@ -54,6 +54,20 @@ const db = {
         } else {
           return Promise.reject("Failed to edit card title in DB");
         }
+      }),
+    editColumnId: (id, columnId) =>
+      fetch(`http://localhost:3000/cards/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        body: JSON.stringify({ columnId })
+      }).then(({ status }) => {
+        if (status === 200) {
+          return Promise.resolve(true);
+        } else {
+          return Promise.reject("Failed to edit card columnId in DB");
+        }
       })
   },
   Column: {

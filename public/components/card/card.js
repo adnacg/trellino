@@ -19,12 +19,10 @@ customElements.define(
         '<link rel="stylesheet" href="components/card/card.css">';
       shadowRoot.appendChild(templateContent.cloneNode(true));
 
-      shadowRoot
-        .getElementById("card")
-        .addEventListener("click", event => this.toggleDescription(event));
-      shadowRoot
-        .getElementById("delete-card")
-        .addEventListener("click", () => this.deleteCard());
+      const mainDivElem = shadowRoot.getElementById("card");
+      mainDivElem.onclick = event => this.toggleDescription(event);
+      shadowRoot.getElementById("delete-card").onclick = () =>
+        this.deleteCard();
       shadowRoot.getElementById("card-title-edit").onsubmit = event =>
         this.editTitle(event, this.getAttribute("cardId"));
       shadowRoot.getElementById("card-content-input").onblur = event =>
@@ -62,7 +60,11 @@ customElements.define(
         return;
       }
       const cardContent = this.shadowRoot.getElementById("card-content-input");
+      const seeMore = this.shadowRoot.getElementById("see-more");
+      const seeLess = this.shadowRoot.getElementById("see-less");
       cardContent.style.display = this.hideContent ? "unset" : "none";
+      seeMore.style.display = this.hideContent ? "none" : "flex";
+      seeLess.style.display = this.hideContent ? "flex" : "none";
       this.hideContent = !this.hideContent;
     }
 
@@ -75,7 +77,7 @@ customElements.define(
     }
 
     deleteCard() {
-      if (confirm("Are you sure?")) {
+      if (confirm("Delete the card?")) {
         db.Card.delete(this.getAttribute("cardId"))
           .then(() => this.parentNode.removeChild(this))
           .catch(error => console.error("Something went wrong:", error));

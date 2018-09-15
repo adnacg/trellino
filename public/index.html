@@ -17,21 +17,20 @@
 
 <body>
     <template id="my-card">
-        <div id="card">
+        <div id="card" draggable="true">
             <div id="card-title-wrapper">
-                <!-- <div id="card-title-display">Card Title</div> -->
                 <div>
                     <form action="" id="card-title-edit">
-                        <input id="card-title-input" value="Card Title Edit" />
+                        <input id="card-title-input" value="Card Title Edit" maxlength="25" />
                     </form>
                 </div>
-                <div><span id="delete-card">X</span></div>
+                <div id="delete-card"><span>x</span></div>
             </div>
             <div id="card-content-div">
-                <!-- <form action="" id="card-content-edit"> -->
                 <textarea id="card-content-input" value="Card Description"></textarea>
-                <!-- </form> -->
             </div>
+            <div id="see-more">.....</div>
+            <div id="see-less">^</div>
         </div>
     </template>
 
@@ -55,10 +54,8 @@
         <header>
             <h1>TRELLINO</h1>
             <nav id="navbar">
-                <div id="add-column">+</div>
-                <form action="" id="search-form">
-                    <input id="search-input" type="text" placeholder="Search.." name="search">
-                </form>
+                <div id="add-column">Add column</div>
+                <input id="search-input" type="text" placeholder="Search.." name="search">
             </nav>
         </header>
         <main id="main-container"></main>

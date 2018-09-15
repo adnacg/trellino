@@ -7,7 +7,7 @@ customElements.define(
       this.columns = [];
       this.cards = [];
       this.displayCards = [];
-      this.searchKey = "";
+      this.draggedCard;
 
       let template = document.getElementById("my-app");
       let templateContent = template.content;
@@ -17,10 +17,8 @@ customElements.define(
       shadowRoot.appendChild(templateContent.cloneNode(true));
 
       shadowRoot.getElementById("add-column").onclick = () => this.addColumn();
-      shadowRoot.getElementById("search-form").onsubmit = event =>
+      shadowRoot.getElementById("search-input").oninput = event =>
         this.searchCards(event);
-      shadowRoot.getElementById("search-input").onchange = event =>
-        this.updateSearchKey(event);
     }
 
     //-----------------------------
@@ -41,9 +39,7 @@ customElements.define(
           this.displayCards = cards;
           this.buildDashboard();
         })
-        .catch(error => {
-          console.error("Something went wrong:", error);
-        });
+        .catch(error => console.error("Something went wrong:", error));
     }
 
     //-----------------------------
@@ -67,20 +63,23 @@ customElements.define(
         });
     }
 
-    updateSearchKey(event) {
-      this.searchKey = event.target.value;
-    }
-
     searchCards(event) {
       event.preventDefault();
-      const keyword = this.searchKey;
-      this.displayCards = this.cards.filter(
-        card =>
-          card.title.toLowerCase().includes(keyword.toLowerCase()) ||
-          card.description.toLowerCase().includes(keyword.toLowerCase())
-      );
-      this.clearDashboard();
-      this.buildDashboard();
+      const keyword = event.target.value;
+      const columnElems = this.shadowRoot.querySelectorAll("my-column");
+      columnElems.forEach(columnElem => {
+        const cardElems = columnElem.shadowRoot.querySelectorAll("my-card");
+        cardElems.forEach(cardElem => {
+          if (
+            cardElem.title.toLowerCase().includes(keyword.toLowerCase()) ||
+            cardElem.description.toLowerCase().includes(keyword.toLowerCase())
+          ) {
+            cardElem.style.display = "flex";
+          } else {
+            cardElem.style.display = "none";
+          }
+        });
+      });
     }
 
     //-----------------------------
@@ -113,16 +112,37 @@ customElements.define(
 
     buildColumn(column) {
       const columnElem = dom.createColumnElem(column);
+      columnElem.id = `my-column-${column.id}`;
+      columnElem.ondrop = event => this.drop(event);
       const columnContentElem = columnElem.shadowRoot.getElementById(
         "column-content"
       );
+
       this.displayCards
         .filter(card => card.columnId === column.id)
         .forEach(card => {
           const cardElem = dom.createCardElem(card);
+          cardElem.ondragstart = event => this.storeCard(event);
           columnContentElem.appendChild(cardElem);
         });
       return columnElem;
+    }
+
+    storeCard(event) {
+      this.draggedCard = event.currentTarget;
+    }
+
+    drop(event) {
+      const targetColumn = event.currentTarget;
+      const columnContentElem = targetColumn.shadowRoot.getElementById(
+        "column-content"
+      );
+
+      const cardId = parseInt(this.draggedCard.getAttribute("cardId"));
+      const columnId = parseInt(targetColumn.getAttribute("columnId"));
+      db.Card.editColumnId(cardId, columnId)
+        .then(() => columnContentElem.appendChild(this.draggedCard))
+        .catch(error => console.error("Something went wrong:", error));
     }
   }
 );
