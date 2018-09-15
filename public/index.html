@@ -17,17 +17,17 @@
 
 <body>
     <template id="my-card">
-        <div id="card" draggable="true">
-            <div id="card-title-wrapper">
+        <div id="main" draggable="true">
+            <div id="title-wrapper">
                 <div>
-                    <form action="" id="card-title-edit">
-                        <input id="card-title-input" value="Card Title Edit" maxlength="25" />
+                    <form action="" id="title-edit">
+                        <input id="title-input" value="Card Title Edit" maxlength="25" />
                     </form>
                 </div>
                 <div id="delete-card"><span>x</span></div>
             </div>
-            <div id="card-content-div">
-                <textarea id="card-content-input" value="Card Description"></textarea>
+            <div id="content">
+                <textarea id="content-input" value="Card Description"></textarea>
             </div>
             <div id="see-more">.....</div>
             <div id="see-less">^</div>
@@ -35,18 +35,18 @@
     </template>
 
     <template id="my-column">
-        <div id="column">
-            <div id="column-title-wrapper">
-                <div id="column-title-display">Column Title Display</div>
+        <div id="main">
+            <div id="title-wrapper">
+                <div id="title-display">Column Title Display</div>
                 <div>
-                    <form action="" id="column-title-edit">
-                        <input id="column-title-input" value="Column Title Edit" maxlength="15" />
+                    <form action="" id="title-edit">
+                        <input id="title-input" value="Column Title Edit" maxlength="15" />
                     </form>
                 </div>
-                <div id="add-card-div"><span id="add-card">+</span></div>
-                <div id="delete-column-div"><span id="delete-column">x</span></div>
+                <div id="add-card">+</div>
+                <div id="delete-column">x</div>
             </div>
-            <div id="column-content"></div>
+            <div id="content"></div>
         </div>
     </template>
 
@@ -58,7 +58,7 @@
                 <input id="search-input" type="text" placeholder="Search.." name="search">
             </nav>
         </header>
-        <main id="main-container"></main>
+        <main id="main"></main>
     </template>
 
     <my-app></my-app>

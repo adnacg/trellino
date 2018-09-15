@@ -19,18 +19,19 @@ customElements.define(
         '<link rel="stylesheet" href="components/card/card.css">';
       shadowRoot.appendChild(templateContent.cloneNode(true));
 
-      const mainDivElem = shadowRoot.getElementById("card");
+      const mainDivElem = shadowRoot.getElementById("main");
       mainDivElem.onclick = event => this.toggleDescription(event);
       shadowRoot.getElementById("delete-card").onclick = () =>
         this.deleteCard();
-      shadowRoot.getElementById("card-title-edit").onsubmit = event =>
+      shadowRoot.getElementById("title-edit").onsubmit = event =>
         this.editTitle(event, this.getAttribute("cardId"));
-      shadowRoot.getElementById("card-content-input").onblur = event =>
-        this.editDescription(event, this.getAttribute("cardId"));
-      shadowRoot.getElementById("card-title-input").onchange = event =>
+
+      shadowRoot.getElementById("title-input").onchange = event =>
         this.updateTitle(event);
-      shadowRoot.getElementById("card-content-input").onchange = event =>
-        this.updateDescription(event);
+      const contentInputElem = shadowRoot.getElementById("content-input");
+      contentInputElem.onchange = event => this.updateDescription(event);
+      contentInputElem.onblur = event =>
+        this.editDescription(event, this.getAttribute("cardId"));
     }
 
     //-----------------------------
@@ -39,10 +40,10 @@ customElements.define(
 
     attributeChangedCallback(name, oldValue, newValue) {
       if (name === "title") {
-        this.shadowRoot.getElementById("card-title-input").value = newValue;
+        this.shadowRoot.getElementById("title-input").value = newValue;
         this.currentTitle = newValue;
       } else if (name === "description") {
-        this.shadowRoot.getElementById("card-content-input").value = newValue;
+        this.shadowRoot.getElementById("content-input").value = newValue;
         this.description = newValue;
       }
     }
@@ -53,18 +54,18 @@ customElements.define(
 
     toggleDescription(event) {
       if (
-        ["delete-card", "card-title-input", "card-content-input"].includes(
+        ["delete-card", "title-input", "content-input"].includes(
           event.target.id
         )
       ) {
         return;
       }
-      const cardContent = this.shadowRoot.getElementById("card-content-input");
-      const seeMore = this.shadowRoot.getElementById("see-more");
-      const seeLess = this.shadowRoot.getElementById("see-less");
-      cardContent.style.display = this.hideContent ? "unset" : "none";
-      seeMore.style.display = this.hideContent ? "none" : "flex";
-      seeLess.style.display = this.hideContent ? "flex" : "none";
+      const contentElem = this.shadowRoot.getElementById("content-input");
+      const seeMoreElem = this.shadowRoot.getElementById("see-more");
+      const seeLessElem = this.shadowRoot.getElementById("see-less");
+      contentElem.style.display = this.hideContent ? "unset" : "none";
+      seeMoreElem.style.display = this.hideContent ? "none" : "flex";
+      seeLessElem.style.display = this.hideContent ? "flex" : "none";
       this.hideContent = !this.hideContent;
     }
 

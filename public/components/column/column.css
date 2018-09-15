@@ -1,4 +1,4 @@
-#column {
+#main {
   font-family: "Josefin Sans", sans-serif;
   background-color: #c98474;
   min-height: 400px;
@@ -12,7 +12,7 @@
   line-height: 2rem;
 }
 
-#column-title-wrapper {
+#title-wrapper {
   display: flex;
   align-items: center;
   background-color: #874c62;
@@ -20,7 +20,7 @@
   line-height: 3rem;
 }
 
-#column-title-display {
+#title-display {
   width: 10rem;
   font-weight: bold;
   color: #f2d388;
@@ -31,12 +31,12 @@
   overflow: hidden;
 }
 
-#column-title-edit {
+#title-edit {
   display: none;
   margin-right: 4rem;
 }
 
-input#column-title-input {
+input#title-input {
   width: 10rem;
   line-height: 3rem;
   font-size: 1.2rem;
@@ -51,8 +51,8 @@ input#column-title-input {
   margin-left: 0.5rem;
 }
 
-#delete-column-div,
-#add-card-div {
+#delete-column,
+#add-card {
   display: flex;
   color: #f2d388;
   width: 2rem;
@@ -63,8 +63,8 @@ input#column-title-input {
   cursor: pointer;
 }
 
-#delete-column-div:hover,
-#add-card-div:hover {
+#delete-column:hover,
+#add-card:hover {
   opacity: 0.9;
   background-color: #c98474;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.22);

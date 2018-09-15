@@ -6,7 +6,6 @@ customElements.define(
 
       this.columns = [];
       this.cards = [];
-      this.displayCards = [];
       this.draggedCard;
 
       let template = document.getElementById("my-app");
@@ -36,7 +35,6 @@ customElements.define(
         })
         .then(cards => {
           this.cards = cards;
-          this.displayCards = cards;
           this.buildDashboard();
         })
         .catch(error => console.error("Something went wrong:", error));
@@ -86,6 +84,23 @@ customElements.define(
       });
     }
 
+    storeCard(event) {
+      this.draggedCard = event.currentTarget;
+    }
+
+    drop(event) {
+      const targetColumn = event.currentTarget;
+      const columnContentElem = targetColumn.shadowRoot.getElementById(
+        "content"
+      );
+
+      const cardId = parseInt(this.draggedCard.getAttribute("cardId"));
+      const columnId = parseInt(targetColumn.getAttribute("columnId"));
+      db.Card.editColumnId(cardId, columnId)
+        .then(() => columnContentElem.appendChild(this.draggedCard))
+        .catch(error => console.error("Something went wrong:", error));
+    }
+
     //-----------------------------
     // Utils
     //-----------------------------
@@ -103,11 +118,11 @@ customElements.define(
     }
 
     clearDashboard() {
-      this.shadowRoot.getElementById("main-container").innerHTML = "";
+      this.shadowRoot.getElementById("main").innerHTML = "";
     }
 
     buildDashboard() {
-      const containerElem = this.shadowRoot.getElementById("main-container");
+      const containerElem = this.shadowRoot.getElementById("main");
       this.columns.forEach(column => {
         const columnElem = this.buildColumn(column);
         containerElem.appendChild(columnElem);
@@ -116,37 +131,16 @@ customElements.define(
 
     buildColumn(column) {
       const columnElem = dom.createColumnElem(column);
-      columnElem.id = `my-column-${column.id}`;
+      columnElem.storeCard = event => this.storeCard(event);
       columnElem.ondrop = event => this.drop(event);
-      const columnContentElem = columnElem.shadowRoot.getElementById(
-        "column-content"
-      );
+      const columnContentElem = columnElem.shadowRoot.getElementById("content");
 
-      this.displayCards
-        .filter(card => card.columnId === column.id)
-        .forEach(card => {
-          const cardElem = dom.createCardElem(card);
-          cardElem.ondragstart = event => this.storeCard(event);
-          columnContentElem.appendChild(cardElem);
-        });
+      this.cards.filter(card => card.columnId === column.id).forEach(card => {
+        const cardElem = dom.createCardElem(card);
+        cardElem.ondragstart = event => this.storeCard(event);
+        columnContentElem.appendChild(cardElem);
+      });
       return columnElem;
-    }
-
-    storeCard(event) {
-      this.draggedCard = event.currentTarget;
-    }
-
-    drop(event) {
-      const targetColumn = event.currentTarget;
-      const columnContentElem = targetColumn.shadowRoot.getElementById(
-        "column-content"
-      );
-
-      const cardId = parseInt(this.draggedCard.getAttribute("cardId"));
-      const columnId = parseInt(targetColumn.getAttribute("columnId"));
-      db.Card.editColumnId(cardId, columnId)
-        .then(() => columnContentElem.appendChild(this.draggedCard))
-        .catch(error => console.error("Something went wrong:", error));
     }
   }
 );

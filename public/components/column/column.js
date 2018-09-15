@@ -19,19 +19,18 @@ customElements.define(
         '<link rel="stylesheet" href="components/column/column.css">';
       shadowRoot.appendChild(templateContent.cloneNode(true));
 
-      const columnDivElem = shadowRoot.getElementById("column");
-      columnDivElem.ondragenter = event => this.dragenter(event);
-      columnDivElem.ondragover = event => this.dragover(event);
-      columnDivElem.ondragleave = event => this.resetColumnColor(event);
-      columnDivElem.ondragend = event => this.resetColumnColor(event);
-      shadowRoot.getElementById("column-title-display").onclick = () =>
+      const mainDivElem = shadowRoot.getElementById("main");
+      mainDivElem.ondragenter = event => this.dragenter(event);
+      mainDivElem.ondragover = event => this.dragover(event);
+      mainDivElem.ondragleave = event => this.resetColumnColor(event);
+      mainDivElem.ondragend = event => this.resetColumnColor(event);
+      shadowRoot.getElementById("title-display").onclick = () =>
         this.toggleTitleEdit();
-      shadowRoot
-        .getElementById("delete-column")
-        .addEventListener("click", () => this.deleteColumn());
-      shadowRoot.getElementById("column-title-edit").onsubmit = event =>
+      shadowRoot.getElementById("delete-column").onclick = () =>
+        this.deleteColumn();
+      shadowRoot.getElementById("title-edit").onsubmit = event =>
         this.editColumnTitle(event, this.getAttribute("columnId"));
-      shadowRoot.getElementById("column-title-input").onchange = event =>
+      shadowRoot.getElementById("title-input").onchange = event =>
         this.updateTitleValue(event);
       shadowRoot.getElementById("add-card").onclick = () => this.addCard();
     }
@@ -42,9 +41,7 @@ customElements.define(
 
     attributeChangedCallback(name, _, newValue) {
       if (name === "title") {
-        this.shadowRoot.getElementById(
-          "column-title-display"
-        ).textContent = newValue;
+        this.shadowRoot.getElementById("title-display").textContent = newValue;
         this.currentTitleValue = newValue;
       }
     }
@@ -64,23 +61,21 @@ customElements.define(
           });
         })
         .then(newCard => {
-          this.shadowRoot
-            .getElementById("column-content")
-            .appendChild(dom.createCardElem(newCard));
+          const newCardElem = dom.createCardElem(newCard);
+          newCardElem.ondragstart = event => this.storeCard(event);
+          this.shadowRoot.getElementById("content").appendChild(newCardElem);
         })
         .catch(error => console.error("Something went wrong:", error));
     }
 
     toggleTitleEdit() {
-      const titleDisplay = this.shadowRoot.getElementById(
-        "column-title-display"
-      );
-      const titleEdit = this.shadowRoot.getElementById("column-title-edit");
-      const titleInput = this.shadowRoot.getElementById("column-title-input");
+      const titleDisplay = this.shadowRoot.getElementById("title-display");
+      const titleEditElem = this.shadowRoot.getElementById("title-edit");
+      const titleInputElem = this.shadowRoot.getElementById("title-input");
 
       titleDisplay.style.display = this.editing ? "flex" : "none";
-      titleEdit.style.display = this.editing ? "none" : "flex";
-      titleInput.value = this.currentTitleValue;
+      titleEditElem.style.display = this.editing ? "none" : "flex";
+      titleInputElem.value = this.currentTitleValue;
       this.editing = !this.editing;
     }
 

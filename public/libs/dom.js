@@ -6,7 +6,7 @@ const dom = {
     cardElem.setAttribute("description", card.description);
     return cardElem;
   },
-  createColumnElem: column => {
+  createColumnElem: (column, storeCard) => {
     const columnElem = document.createElement("my-column");
     columnElem.setAttribute("title", column.title);
     columnElem.setAttribute("columnId", column.id);
