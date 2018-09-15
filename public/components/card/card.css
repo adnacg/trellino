@@ -79,10 +79,12 @@ textarea {
 #see-more {
   display: flex;
   justify-content: center;
+  cursor: pointer;
 }
 
 #see-less {
   display: none;
   justify-content: center;
   font-size: 3rem;
+  cursor: pointer;
 }
