@@ -8,6 +8,10 @@ From a terminal:
 - Go into the repository: `cd trellino`
 - Install the app: `npm install`
 - Start the app: `npm start`
+- Visit `http://localhost:3000` from the Google Chrome browser
+
+Alternatively, if there is an issue with json-server, please install it manually (`npm install json-server`)
+before relaunching the app (`npm start`).
 
 ## Features
 

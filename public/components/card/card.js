@@ -107,7 +107,10 @@ customElements.define(
           this.setAttribute("title", newTitle);
           inputElem.blur();
         })
-        .catch(error => console.error("Something went wrong:", error));
+        .catch(error => {
+          console.error("Something went wrong:", error);
+          alert(error);
+        });
     }
 
     editDescription(event, cardId) {

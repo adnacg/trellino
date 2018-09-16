@@ -114,7 +114,10 @@ customElements.define(
           this.toggleTitleEdit();
           this.setAttribute("title", newTitle);
         })
-        .catch(error => console.error("Something went wrong:", error));
+        .catch(error => {
+          console.error("Something went wrong:", error);
+          alert(error);
+        });
     }
 
     dragenter(event) {
