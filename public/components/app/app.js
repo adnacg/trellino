@@ -55,9 +55,7 @@ customElements.define(
           return db.Column.create({ title: this.generateDefaultName() });
         })
         .then(newColumn => {
-          const containerElem = this.shadowRoot.getElementById(
-            "main-container"
-          );
+          const containerElem = this.shadowRoot.getElementById("main");
           containerElem.appendChild(this.buildColumn(newColumn));
         })
         .catch(error => {
@@ -115,10 +113,6 @@ customElements.define(
         newTitle = `New Column (${counter})`;
       }
       return newTitle;
-    }
-
-    clearDashboard() {
-      this.shadowRoot.getElementById("main").innerHTML = "";
     }
 
     buildDashboard() {
