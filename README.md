@@ -17,19 +17,22 @@ before relaunching the app (`npm start`).
 
 ## Features
 
-Add columns via top "Add column" button
-Delete columns via column header's "X" button
+- Add columns via top "Add column" button
+- Delete columns via column header's "X" button
+
 <img src="public/assets/images/trellino2.png">
 
-Add cards via column header's "+" button
-Delete cards via card's "X" button
-Toggle expanding description by clicking on the "...."/"^" card area
-Modify column titles by clicking on them (change effective after pressing the enter key)
-Modify card titles and card contents by clicking on them (change effective after unfocusing from them)
+- Add cards via column header's "+" button
+- Delete cards via card's "X" button
+- Toggle expanding description by clicking on the "...."/"^" card area
+- Modify column titles by clicking on them (change effective after pressing the enter key)
+- Modify card titles and card contents by clicking on them (change effective after unfocusing from them)
+
 <img src="public/assets/images/trellino3.png">
 
-Search for specific cards by substrings in titles/descriptions
-Change card category via drag and drop from one column to another
+- Search for specific cards by substrings in titles/descriptions
+- Change card category via drag and drop from one column to another
+
 <img src="public/assets/images/trellino4.png">
 
 
